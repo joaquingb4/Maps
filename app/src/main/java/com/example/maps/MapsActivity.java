@@ -3,8 +3,12 @@ package com.example.maps;
 import static android.content.ContentValues.TAG;
 
 import androidx.fragment.app.FragmentActivity;
+
+import android.location.Address;
+import android.location.Geocoder;
 import android.os.Bundle;
 import android.util.Log;
+import android.widget.Toast;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -14,10 +18,13 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.example.maps.databinding.ActivityMapsBinding;
 
+import java.util.List;
+import java.util.Locale;
+
 public class MapsActivity extends FragmentActivity implements OnMapReadyCallback {
 
     private GoogleMap mMap;
-private ActivityMapsBinding binding;
+    private ActivityMapsBinding binding;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -47,13 +54,38 @@ private ActivityMapsBinding binding;
         mMap.setOnMapClickListener(new GoogleMap.OnMapClickListener(){
             @Override
             public void onMapClick(LatLng latLng){
-                Log.d("Latitud:", ""+googleMap.getMyLocation().getLatitude());
-                Log.d("Longitud:", ""+googleMap.getMyLocation().getLongitude());//no funciona
+                double lat = latLng.latitude;
+                double lon = latLng.longitude;
+
+                Log.d("Latitud:", "" + lat);
+                Log.d("Longitud:", ""+ lon);
+                getAddress(lat, lon);
             }
         });
         // Add a marker in Sydney and move the camera
         LatLng sydney = new LatLng(-34, 151);
         mMap.addMarker(new MarkerOptions().position(sydney).title("Marker in Sydney"));
         mMap.moveCamera(CameraUpdateFactory.newLatLng(sydney));
+    }
+
+    public void getAddress(double lat, double lng) {
+        try {
+            Geocoder geo = new Geocoder(this.getApplicationContext(), Locale.getDefault());
+            List<Address> addresses = geo.getFromLocation(lat, lng, 1);
+            if (addresses.isEmpty()) {
+                Toast.makeText(this, "No s’ha trobat informació", Toast.LENGTH_LONG).show();
+            } else {
+                if (addresses.size() > 0) {
+                    String msg =addresses.get(0).getFeatureName() + ", " + addresses.get(0).getLocality() +", " + addresses.get(0).getAdminArea() + ", " + addresses.get(0).getCountryName();
+
+                    Toast.makeText(this, msg, Toast.LENGTH_LONG).show();
+
+                }
+            }
+        }
+        catch(Exception e){
+            Toast.makeText(this, "No Location Name Found", Toast.LENGTH_LONG).show();
+            Log.d("Error", " Estoy aquí");
+        }
     }
 }
