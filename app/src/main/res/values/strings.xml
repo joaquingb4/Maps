@@ -1,4 +1,7 @@
 <resources>
     <string name="app_name">Maps</string>
     <string name="title_activity_maps">MapsActivity</string>
+    <string name="permission_rationale_location">ejemplo1</string>
+    <string name="permission_required_toast">ejemplo2</string>
+    <string name="location_permission_denied">ejemploDenegado</string>
 </resources>
